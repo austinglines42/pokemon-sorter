@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% import 'WTForms.html' as wtforms %}
+
+{% block title %}Sign up{% endblock title %}
+{% block content %}
+    <div class="container row">
+        <div class="col-3"></div>
+        <div class="col-6 bg-secondary rounded-3">
+        {{ wtforms.builder(form, 'primary text-light', 'Login') }}
+        <div class="text-center mb-2">
+            <div class="">Need an account?</div>
+            <a href='/signup' class='text-decoration-none'>Sign up</a>
+        </div>
+        </div>
+    </div>
+{% endblock content %}

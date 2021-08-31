@@ -1,0 +1,46 @@
+body {
+	position: relative;
+}
+
+#nav-profile-img {
+	height: 2.5rem;
+}
+
+#sort-container {
+	position: absolute;
+	height: 90vh;
+}
+
+.move-list {
+	padding-right: 6em;
+}
+.pokemon-stat-table td {
+	padding: 0;
+	margin: 0;
+}
+.pokemon-stat-table tr {
+	padding: 0;
+	margin: 0;
+}
+
+/* .offcanvas-body td {
+	margin: 0;
+	width: 100%;
+}
+.offcanvas-body div {
+	width: 95%;
+} */
+
+html body div #content {
+	padding: 0;
+	margin: 0;
+}
+
+.move-list .list-group-item {
+	font-size: 1em;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.move-list.list-group-item span {
+	text-align: end;
+}

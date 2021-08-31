@@ -1,0 +1,9 @@
+{% macro pokemon_card(pokemon, col) %}
+<div class="card col-{{col}} display-responsive border p-0 m-0" >
+  <div class="card-header">
+      <p>{{pokemon.rank}}</p>
+  </div>
+<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/{{pokemon.pokemon.id}}.png" class="img-thumbnail card-img-top">
+<p>{{pokemon.pokemon.name}}</p>
+</div>
+{% endmacro %}

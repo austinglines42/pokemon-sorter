@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% import 'pokemon_macros.html' as pokemon %}
+
+{% block title %} {{user.username}} {% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div id='user-info' class="p-2 col-2 bg-secondary rounded vh-100 ">
+            <img class="w-100 p-0 m-0 img-thumbnail bg-info" src='{{user.image_url}}'>
+            <h1 class='text-center'>{{user.username}}</h1>
+            <p class="px-3">{{user.bio}}</p>
+            <p class="px-3">{{user.location}}</p>
+        </div>
+        <div class="col-9 rounded">
+            <div class="row text-center ">
+                {% for p in pokemon_list %}
+                    {{ pokemon.pokemon_card(p, 3) }}
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock content %}

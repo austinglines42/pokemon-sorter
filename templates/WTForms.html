@@ -1,0 +1,26 @@
+{% macro builder(form_object, color='primary', submit='Submit') %}
+    <form method="POST" id="user_form" class="mt-3">
+      {{ form_object.hidden_tag() }}
+      {% for field in form_object if field.widget.input_type != 'hidden' %}
+        {% for error in field.errors %}
+          <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+        {{ field(placeholder=field.label.text, class="form-control border-secondary text-light rounded my-2") }}
+      {% endfor %}
+      <button class="btn btn-{{color}} container-fluid mt-0 mb-3">{{submit}}</button>
+    </form>
+{% endmacro %}
+
+{% macro generation() %}
+  <div class="col-12 ">
+    <form id="generation-form" class="m-2 w-100 row justify-center">
+      {% for num in [1,2,3,4,5,6,7,8] %}
+      <div class="col-md-3 mb-3 col-sm-6 d-inline-flex justify-content-center">
+        <label class="form-check-label me-2" for="generation-{{num}}">Generation {{num}}</label>
+        <input type="checkbox" class="form-check-input" id="generation-{{num}}">
+      </div>
+    {% endfor %}
+      <button class="btn btn-primary col-12 mt-0 mb-0" type="submit">Submit</button>
+    </form>
+  </div>
+{% endmacro %}

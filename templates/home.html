@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% import 'pokemon_macros.html' as pokemon %}
+
+{% block title %}Pokemon Sorter{% endblock title %}
+
+{% block content %}
+{% if g.user.pokemon %}
+<div class="row text-center">
+{% for p in pokemon_list %}
+    {{ pokemon.pokemon_card(p, 3) }}
+{% endfor %}
+</div>
+{% else %}
+    <h1 class="mx-auto"></h1>You need to sort at least 1 list to have anything on this page.</h1>
+{% endif %}
+{% endblock content %}
