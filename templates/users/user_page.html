@@ -4,22 +4,33 @@
 {% block title %} {{user.username}} {% endblock title %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div id='user-info' class="p-2 col-2 bg-secondary rounded vh-100 ">
-            <img class="w-100 p-0 m-0 img-thumbnail bg-info" src='{{user.image_url}}'>
-            <h1 class='text-center'>{{user.username}}</h1>
-            <p class="px-3">{{user.bio}}</p>
-            <p class="px-3">{{user.location}}</p>
-        </div>
-        <div class="col-9 rounded">
-            <div class="row text-center ">
+<div class="position-fixed p-0 m-0 start-0 bg-secondary rounded" style="width: 25vw; height: 90%">
+    <p class='text-center pt-0 mb-1 border border-light rounded' style="font-size: 1.9vw;">{{user.username}}</p>
+    <div class="py-0 m-0 px-xl-5">
+        <img class="w-100 p-0 m-0 img-thumbnail bg-info" src='{{user.image_url}}'>
+    </div>
+    <p class="fw-bolder text-center p-0 m-0" style="font-size: 1.5vw;">Bio</p>
+    <p class="px-2 text-wrap" style="font-size: 0.8vw;">{{user.bio}}</p>
+    <p class="fw-bolder text-center p-0 m-0" style="font-size: 1.5vw;">Location</p>
+    <p class="px-2 text-wrap" style="font-size: 1vw;">{{user.location}}</p>
+    {% if g.user.id == user.id %}
+        <a class="btn btn-danger py-2 position-fixed start-0 bottom-0" href="/users/{{g.user.id}}/edit" style="font-size: 2vw; width: 25vw;  ">Edit User</a>
+    {% endif %}
+</div>
+<!-- <div class=" p-0 m-0"> -->
+    <div class="">
+        <!-- <div id='user-info' class="p-2 col-2 bg-secondary rounded vh-100 "> -->
+            <div class="position-absolute row text-center p-0 px-1 m-0 end-0" style="width: 75%">
                 {% for p in pokemon_list %}
-                    {{ pokemon.pokemon_card(p, 3) }}
+                {% if g.user.id == user.id %}
+                <a class='d-inline p-0 m-0 row col-xxl-2 col-lg-3 col-md-4 col-sm-6' href="/users/{{g.user.id}}/{{p.pokemon.id}}">
+                    {{ pokemon.pokemon_card(p, 12, pokemon_list|length) }}
+                </a>
+                {%else%}
+                {{ pokemon.pokemon_card(p, 4, pokemon_list|length) }}
+                {% endif %}
                 {% endfor %}
             </div>
-        </div>
-
-    </div>
-</div>
+    <!-- </div>
+</div> -->
 {% endblock content %}

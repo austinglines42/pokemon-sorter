@@ -1,5 +1,7 @@
+// Base URL for each pokemon's artwork
 const ART_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
 
+// Template for each pokemon's moves
 const MOVE_TEMPLATE = `<table class="table table-striped table-responsive p-0 w-75 mx-auto my-1 table-dark border rounded">
     <thead>
         <tr>
@@ -34,25 +36,62 @@ const MOVE_TEMPLATE = `<table class="table table-striped table-responsive p-0 w-
     </tbody>
 </table>`;
 
+////////// Initializing values for sorting. //////////
+// Stores the list of all the pokemon ids.
 let idList = [];
+
+// Stores the current position of the left array.
 let currentL = 0;
+
+// Stores the current position of the right array.
 let currentR = 0;
+
+// Stores the position in leftArr and rightArr.
 let position = 0;
+
+// Starting position of array in idList.
 let left = 0;
+
+// Ending position of array in idList.
 let right = 0;
+
+// Middle of array in idList.
 let middle = 0;
+
+// Stores left side of the array positions for idList
 let leftArr = [];
+
+// Stores right side of the array positions for idList
 let rightArr = [];
+
+// Creates a temporary array for pushing data into the main array.
 let tempArr = [];
+
+// List of all pokemon.
 let pokemonList = [];
+
+// Stores the last left position
 let lastL = 0;
+
+// Stores the last right position.
 let lastR = 0;
+
+// Boolean for letting buttons be clickable.
 let clickable = true;
+
+// Data for left pokemon
 let pokemon1 = null;
+
+// Data for right pokemon.
 let pokemon2 = null;
+
+// Boolean to confirm a user wants to delete their save data and list.
 let deleteSaveConfirmation = false;
+
+// Boolean for checking if the page is currently loading.
 let waitResponse = false;
 
+//JQuery selectors
 let $loadingSpin = $('#loading-spinner');
 let $btn1 = $('#choose-1');
 let $btn2 = $('#choose-2');
@@ -63,6 +102,8 @@ let $pokemonTwo = $('#pokemon-two-container');
 let $sortController = $('#sort-controller');
 let $generationFormContainer = $('#generation-form-container');
 let $gens = [];
+
+// Loads save data when the page has loaded.
 $(document).ready(function() {
 	if (sessionStorage.getItem('idList')) {
 		if ($('#save-div').text) {
@@ -71,10 +112,12 @@ $(document).ready(function() {
 	}
 });
 
+// Loads generations into the page.
 for (let i = 1; i <= 8; i++) {
 	$gens.push($(`#generation-${i}`));
 }
 
+// Delete's the user's save data.
 async function deleteSaveData() {
 	if (deleteSaveConfirmation) {
 		sessionStorage.clear();
@@ -91,6 +134,7 @@ async function deleteSaveData() {
 	}, 5000);
 }
 
+// Saves the user's data into the session storage.
 function saveinStorage() {
 	sessionStorage.setItem('idList', JSON.stringify(idList));
 	sessionStorage.setItem('currentL', currentL);
@@ -101,6 +145,7 @@ function saveinStorage() {
 	sessionStorage.setItem('position', position);
 }
 
+// Submits the generation data to the server and returns a list of pokemon for the selected generations.
 async function submitGeneration(evt) {
 	evt.preventDefault();
 	let generations = [];
@@ -117,6 +162,7 @@ async function submitGeneration(evt) {
 	start_sort(pokemonList);
 }
 
+// Loads save data from session storage.
 function loadSaveData() {
 	position = parseInt(sessionStorage.getItem('position'));
 	left = parseInt(sessionStorage.getItem('left'));
@@ -135,9 +181,8 @@ function loadSaveData() {
 	loadPokemonData();
 }
 
+// Setup for all pokemon sorting.
 function start_sort(pokemonList) {
-	// ONLY FOR TESTING
-	// idList = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
 	idList = pokemonList;
 	leftArr = [];
 	rightArr = [];
@@ -148,11 +193,13 @@ function start_sort(pokemonList) {
 	showSorter();
 }
 
+// Displays the sorter.
 function showSorter() {
 	$generationFormContainer.addClass('d-none');
 	$sortContainer.removeClass('d-none');
 }
 
+// Loads the pokemon data into the sorter.
 async function loadPokemonData() {
 	buttonsOn(false);
 	pokemon1 = idList[currentL];
@@ -169,6 +216,7 @@ async function loadPokemonData() {
 	saveinStorage();
 }
 
+// Allows the user to click on the buttons.
 function buttonsOn(on) {
 	if (on) {
 		$loadingSpin.addClass('d-none');
@@ -179,12 +227,14 @@ function buttonsOn(on) {
 	}
 }
 
+// Estimated number of comparisons to sort the list.
 function estimatedComparisons() {
 	n = idList.length;
 	result = n * Math.log(n) - Math.pow(2, Math.log(n)) + 1;
 	return Math.floor(result);
 }
 
+// Saves a copy of the session storage data to the database.
 async function saveToServer() {
 	let idList = sessionStorage.getItem('idList');
 	let currentL = parseInt(sessionStorage.getItem('currentL'));
@@ -210,6 +260,7 @@ async function saveToServer() {
 	waitResponse = true;
 }
 
+// Called when the user selects the left pokemon.
 function leftWin() {
 	if (clickable) {
 		tempArr.push(idList[currentL]);
@@ -226,6 +277,7 @@ function leftWin() {
 	}
 }
 
+// Called when the user selects the right pokemon.
 function rightWin() {
 	if (clickable) {
 		tempArr.push(idList[currentR]);
@@ -242,6 +294,7 @@ function rightWin() {
 	}
 }
 
+// Repositions the position in the leftArr and rightArr.
 function reposition() {
 	for (let i = 0; i < tempArr.length; i++) {
 		idList[left + i] = tempArr[i];
@@ -252,6 +305,7 @@ function reposition() {
 	}
 }
 
+// Detects if the user has sorted all pokemon.
 function finishedSorting() {
 	if (position < leftArr.length) {
 		return false;
@@ -269,6 +323,7 @@ function finishedSorting() {
 	return true;
 }
 
+// Preloads all images for faster loading.
 function preloadImages() {
 	idList.forEach(function(id) {
 		let $newImage = $('#image-preloader').clone();
@@ -277,6 +332,7 @@ function preloadImages() {
 	});
 }
 
+// Initializes all if it is the first time loading the page.
 function initializeValues() {
 	left = leftArr[position];
 	right = rightArr[position];
@@ -287,6 +343,7 @@ function initializeValues() {
 	loadPokemonData();
 }
 
+// Recursive funciton that generates the different positions for leftArr and rightArr based on the MergeSort algorithm
 function generatePositions(left, right) {
 	if (left >= right) {
 		return;
@@ -298,6 +355,7 @@ function generatePositions(left, right) {
 	rightArr.push(right);
 }
 
+// Loads the HTML for the pokemon.
 function loadHTML(pokemon, side) {
 	$selector = $(`#pokemon-${side}-container`);
 	$selector.find('img').first().attr('src', `${ART_URL}${pokemon.id}.png`);
@@ -311,10 +369,12 @@ function loadHTML(pokemon, side) {
 	}
 }
 
+// Gets the current user's id
 function get_id() {
 	return $('.user-link').attr('id');
 }
 
+// Generates the move list for the current pokemon
 function generateMoveList(pokemon, side) {
 	$selector = $(`#move-${side}-table`);
 	$selector.html('');
@@ -331,6 +391,7 @@ function generateMoveList(pokemon, side) {
 	});
 }
 
+// function for debugging the script.
 function debug(where, extraName = '', extraVal = '') {
 	console.log(`${where} ${extraName} ${extraVal}`);
 	console.log(
@@ -338,8 +399,13 @@ function debug(where, extraName = '', extraVal = '') {
 	);
 }
 
+// Saves the progress to the server.
 $('#save-progress').on('click', saveToServer);
+// Sends the generation information to the server to generate a pokemon list.
 $('#generation-form').on('submit', submitGeneration);
+// Delete's the current user's save data.
 $('#delete-save-data').on('click', deleteSaveData);
+// Selects the left pokemon.
 $('#choose-1').on('click', leftWin);
+// Selects the right pokemon.
 $('#choose-2').on('click', rightWin);

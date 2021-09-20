@@ -3,7 +3,12 @@
 
 {% block title %}Pokemon Sorter{% endblock title %}
 {% block content %}
-
+{% if g.user.pokemon %}
+<div class="text-center bg-secondary px-3 pt-2 rounded">
+<h1>List already sorted on this account.</h1>
+<button id='delete-save-data' class='btn block-btn h-25 mx-auto btn-outline-danger w-100 p-0 mb-3 '><h1>Start over</h1></button>
+</div>
+{% else %}
 {% if saveData %}
     <div id="save-div" class="d-none">{{saveData}}</div>
 {% endif %}
@@ -119,7 +124,7 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body row">
-        <div id='move-1-table' class="overflow-auto move-table p-0 m-0" style="max-height: 99%"></div>
+        <div id='move-1-table' class="overflow-auto border border-light rounded move-table p-0 m-0" style="max-height: 99%"></div>
     </div>
 </div>
 <div class="offcanvas offcanvas-end" tabindex="-1" id="move2Canvas" aria-labelledby="move2CanvasLabel">
@@ -128,7 +133,7 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body row">
-        <div id='move-2-table' class="overflow-auto p-0 m-0 move-table" style="max-height: 99%">
+        <div id='move-2-table' class="overflow-auto border border-light p-0 m-0 move-table" style="max-height: 99%">
         </div>
     </div>
 </div>
@@ -141,6 +146,7 @@
 </div>
 <img style="width:0px; height:0px;" class='position-absolute' src=''>
 
+{% endif %}
 {% endblock content %}
 {% block scripts %}
 <script src="https://unpkg.com/axios/dist/axios.js"></script>

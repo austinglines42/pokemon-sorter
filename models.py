@@ -17,7 +17,13 @@ def random_profile_pic():
     """Chooses a random profile picture for the user"""
 
     rng = random.randint(1,718)
-    path = BASE_URL + str(rng)
+    path = BASE_URL
+    if rng < 100:
+        if rng < 10:
+            path += '00'
+        else:
+            path += '0'
+    path += str(rng)
     # Some pokemon have variant images so if the random number is one of the variants then it will choose which variant.
     if rng in [201,422,423,492,550,555,592,593,618,646,668,678]:
         if rng not in [201,646]:
@@ -26,7 +32,7 @@ def random_profile_pic():
             path += variant_letter(3)
         else:
             path += variant_letter(28)
-    return path+'.png'
+    return path + '.png'
 
 
 class User(db.Model):
@@ -107,7 +113,7 @@ class Pokemon(db.Model):
     generation_id = db.Column(db.Integer, db.ForeignKey('generations.id'), nullable=False)
 
     # Relationships for Pokemon
-    generation = db.relationship("Generation", backref='pokemon')
+    # generation = db.relationship("Generation", backref='pokemon')
     types = db.relationship('Type', secondary='pokemon_types', backref='pokemon')
     moves = db.relationship("Move", secondary='pokemon_moves', backref='pokemon')
 
@@ -208,6 +214,7 @@ class Generation(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     region = db.Column(db.Text, nullable=False, unique=True)
+    pokemon = db.relationship("Pokemon", backref='generation', order_by='Pokemon.id')
 
 class Type(db.Model):
     """Different types of pokemon"""

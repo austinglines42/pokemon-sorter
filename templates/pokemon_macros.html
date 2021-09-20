@@ -1,9 +1,27 @@
-{% macro pokemon_card(pokemon, col) %}
-<div class="card col-{{col}} display-responsive border p-0 m-0" >
-  <div class="card-header">
-      <p>{{pokemon.rank}}</p>
+{% macro pokemon_card(pokemon, col, total, size='5') %}
+{% set half = total/2 %}
+{% set max = 204 %}
+{% set interval = max/half %}
+{% if pokemon.rank <= (total/2) %}
+  {% set num = max + (pokemon.rank*interval)|round(0,'floor')|int*256 %}
+{% else %}
+  {% set num = max*256+((total-pokemon.rank)*interval)|round(0,'floor')|int %}
+{% endif %}
+{% if num|int < 4300 %}
+  {% set color = '#0'+'%0x' % num|int + '00' %}
+{% else %}
+  {% set color = '#'+'%0x' % num|int + '00' %}
+{% endif %}
+<div class="col-{{col}} display-responsive m-0 p-0">
+  <div class="card border border-primary p-0 mx-1 mb-2">
+    <div class="card-header p-0 m-0">
+      <p class="p-0 m-0  fs-5" style="color: {{color}};">
+      {{pokemon.rank}}</p>
+    </div>
+    <img
+      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/{{pokemon.pokemon.id}}.png"
+      class="img-thumbnail card-img-top" style="border-color: {{color}};">
+    <p class="p-1 m-0 fs-{{size}}" style="color: {{color}};">{{pokemon.pokemon.name}}</p>
   </div>
-<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/{{pokemon.pokemon.id}}.png" class="img-thumbnail card-img-top">
-<p>{{pokemon.pokemon.name}}</p>
 </div>
 {% endmacro %}

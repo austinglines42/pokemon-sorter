@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% import 'WTForms.html' as wtforms %}
+{% import 'pokemon_macros.html' as pokemon %}
+
+{% block title %} {{user_pokemon.pokemon.name}} {% endblock title %}
+
+{% block content %}
+<div class="text-center row">
+    <div class="col-3 m-0 p-0"></div>
+    <div class="col-6 m-0 p-3 pt-0 mt-0">
+        {{ pokemon.pokemon_card(user_pokemon, 12, g.user.pokemon|length, size='1') }}
+    {{ wtforms.userPokemon(form, user_pokemon, color='primary text-light', submit='Edit Pokemon Note') }}
+    </div>
+</div>
+{% endblock content %}

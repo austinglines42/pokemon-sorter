@@ -24,3 +24,16 @@
     </form>
   </div>
 {% endmacro %}
+
+{% macro userPokemon(form_object, user_pokemon, color='primary', submit='submit') %}
+    <form method="POST" id="user_form" class="mt-3">
+      {{ form_object.hidden_tag() }}
+      {% for field in form_object if field.widget.input_type != 'hidden' %}
+        {% for error in field.errors %}
+          <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+        {{ field(placeholder=field.label.text, class="form-control border-secondary text-light rounded my-2") }}
+      {% endfor %}
+      <button class="btn btn-{{color}} container-fluid mt-0 mb-3" type="submit">{{submit}}</button>
+    </form>
+{% endmacro %}

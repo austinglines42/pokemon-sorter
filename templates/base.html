@@ -33,15 +33,15 @@
             {% if g.user %}
                 <li class="nav-item my-2">
                     <a id='{{g.user.id}}' class='user-link navbar-brand'href='/users/{{g.user.id}}'><img id='nav-profile-img' src="{{g.user.image_url}}" class="navbar-brand border p-0 my-0 bg-info rounded-circle">{{g.user.username}}</a>
-                    <a class="m3-5 py-1 btn btn-outline-danger" href='/logout'>Logout</a>
+                    <a class="m3-5 py-1 btn btn-outline-danger" id='nav-user-logout' href='/logout'>Logout</a>
                 </li>
                 <li class="nav-item">
                     
                 </li>
             {% else %}
             <div class='d-inline-flex'>
-                <a class='btn btn-outline-success px-lg-5' href="/login">Login</a>
-                <a class='btn btn-outline-info px-lg-5 mx-4' href="/signup">Sign up</a>
+                <a class='btn btn-outline-success px-lg-5 my-2' href="/login">Login</a>
+                <a class='btn btn-outline-info px-lg-5 mx-4 my-2' href="/signup">Sign up</a>
             </div>
             {% endif %}
         </ul>
@@ -60,6 +60,7 @@
         {% endfor %}
     </div>
     <script src="http://unpkg.com/jquery"></script>
+    <script src="/static/js/base.js"></script>
     {% block scripts %}{% endblock scripts %}
 </body>
 

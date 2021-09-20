@@ -7,7 +7,7 @@
 {% if g.user.pokemon %}
 <div class="row text-center">
 {% for p in pokemon_list %}
-    {{ pokemon.pokemon_card(p, 3) }}
+    {{ pokemon.pokemon_card(p, 3, pokemon_list|length) }}
 {% endfor %}
 </div>
 {% else %}

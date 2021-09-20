@@ -4,7 +4,7 @@ from types import MethodDescriptorType
 from flask import Flask, render_template, request, flash, redirect, session, g
 # from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-from forms import SignupForm, LoginForm, SelectGenerationForm
+from forms import SignupForm, LoginForm, EditUserPokemon, EditUserForm
 from models import db, connect_db, User, Pokemon, PokemonMove, Move, Generation, UserPokemon, PokemonType, Type
 
 CURR_USER_KEY = "curr_user"
@@ -22,7 +22,6 @@ app.config['SQLALCHEMY_ECHO'] = False
 connect_db(app)
 db.create_all()
 
-# UserPokemon.__tablename__.drop()
 
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
@@ -57,7 +56,10 @@ def require_login():
 @app.route('/')
 def home_page():
     """Routes the user to the homepage."""
-    pokemon_list = UserPokemon.query.filter(UserPokemon.user_id==g.user.id)
+    if not g.user:
+        return render_template('home.html')
+    p_list = UserPokemon.query.filter(UserPokemon.user_id==g.user.id).order_by(UserPokemon.rank)
+    pokemon_list = [pokemon for pokemon in p_list]
 
     return render_template("home.html", pokemon_list=pokemon_list)
 
@@ -111,15 +113,48 @@ def user_page(uid):
     """Routes the user to the selected user's page."""
 
     user = User.query.get_or_404(uid)
-    pokemon_list = UserPokemon.query.filter(UserPokemon.user_id==uid)
+    p_list = UserPokemon.query.filter(UserPokemon.user_id==uid).order_by(UserPokemon.rank)
+    pokemon_list = [pokemon for pokemon in p_list]
     return render_template("/users/user_page.html", user = user, pokemon_list=pokemon_list)
 
-@app.route('/users/<int:uid>/list')
-def user_list(uid):
+@app.route('/users/<int:uid>/edit', methods=["GET", "POST"])
+def edit_user(uid):
+    if g.user.id is not uid:
+        flash('You cannot edit other users', 'danger')
+        return redirect(f'/users/{uid}')
+    user = User.query.get_or_404(uid)
+    form = EditUserForm()
+    if form.validate_on_submit():
+        if User.authenticate(g.user.username, form.password.data):
+            bio = form.bio.data
+            location = form.location.data
+            if bio != '':
+                user.bio = bio
+            if location != '':
+                user.location = location
+            db.session.commit()
+            return redirect(f'/users/{uid}')
+        else:
+            flash("Invalid password", 'danger')
+    form.location.default = user.location
+    form.bio.default = user.bio
+    form.process()
+    return render_template('/users/edit_user.html', user=user, form=form)
+
+@app.route('/users/<int:uid>/<int:pid>', methods = ['GET', 'POST'])
+def user_list(uid,pid):
     """Routes the user to a page that displays the selected users' favorite pokemon"""
 
-    pokemon = User.query.get_or_404(uid).pokemon
-    return render_template("/users/user_list.html", pokemon = pokemon)
+    user_pokemon = UserPokemon.query.filter(UserPokemon.user_id==uid,UserPokemon.pokemon_id==pid).first()
+    form = EditUserPokemon()
+
+    if form.validate_on_submit():
+        user_pokemon.note = form.note.data
+        db.session.commit()
+        return redirect(f'/users/{uid}')
+    form.note.default = user_pokemon.note
+    form.process()
+    return render_template("/users/user_pokemon.html", user_pokemon = user_pokemon, form=form)
 
 @app.route('/sorter')
 def pokemon_sorter_page():
@@ -129,7 +164,6 @@ def pokemon_sorter_page():
         flash("You must be logged in to sort pokemon.", 'danger')
         return redirect('/login')
     if g.user.save_list:
-        print('loaded saved list')
         saveData = json.loads(g.user.save_list)
         return render_template('sorter.html', saveData=saveData)
     return render_template('sorter.html')
@@ -155,6 +189,7 @@ def generate_sort_list():
 
 @app.route('/api/sorter/save', methods=['POST'])
 def save_to_database():
+    """Saves a users's data to the server."""
     resp =  request.json
     save_data = json.dumps(resp['saveData'])
     user_id = resp['user']
@@ -165,10 +200,9 @@ def save_to_database():
 
 @app.route('/api/sorter/delete', methods=['POST'])
 def delete_save_data():
+    """Delete's a user's save off the server."""
     resp =  request.json
-    print(resp)
     user_id = resp['user']
-    print(user_id)
     user = User.query.get_or_404(user_id)
     user.save_list = ''
     db.session.commit()
@@ -176,11 +210,13 @@ def delete_save_data():
 
 @app.route('/api/pokemon/<int:id>')
 def get_pokemmon_data(id):
+    """Gets the information for a pokemon off the server."""
     pokemon = Pokemon.query.get_or_404(id)
     return Pokemon.return_dict(pokemon)
 
 @app.route('/make_list')
 def make_user_pokemon_list():
+    """Generates a list of pokemon"""
     if g.user.id:
         user = User.query.get_or_404(g.user.id)
         id_list = json.loads(user.save_list).get('idList')
@@ -203,6 +239,7 @@ def make_user_pokemon_list():
 
 
 def get_generation_pokemon(gen_id):
+    """Gets the pokemon from the provided generation."""
     gen = Generation.query.get_or_404(gen_id)
     pokemon_list = gen.pokemon
     return [pokemon.id for pokemon in pokemon_list]
