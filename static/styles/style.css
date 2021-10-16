@@ -9,6 +9,7 @@ body {
 #sort-container {
 	position: absolute;
 	height: 90vh;
+	width: 100vw;
 }
 
 .move-list {
@@ -23,13 +24,111 @@ body {
 	margin: 0;
 }
 
-/* .offcanvas-body td {
-	margin: 0;
-	width: 100%;
+#user-username {
+	font-size: 1.5vw;
 }
-.offcanvas-body div {
-	width: 95%;
-} */
+
+/* xs */
+@media only screen and (max-width: 576px) {
+	#user-bar {
+		position: static;
+		width: 100%;
+	}
+	#user-pokemon-list {
+		position: static;
+		width: 100%;
+	}
+	#user-username {
+		font-size: 1.9vw;
+	}
+	.user-info-head {
+		font-size: 2.2vw;
+	}
+	.user-info-body {
+		font-size: 1.8vw;
+	}
+	#user-edit {
+		font-size: 5vw;
+	}
+	#user-bio {
+		height: 70%;
+	}
+	#user-location {
+		height: 25%;
+	}
+}
+/* sm */
+@media only screen and (min-width: 577px) {
+	#user-bar {
+		position: fixed;
+		width: 50vw;
+		height: 90vh;
+	}
+	#user-pokemon-list {
+		position: absolute;
+		width: 50%;
+	}
+	#user-username {
+		font-size: 3vw;
+	}
+	.user-info-head {
+		font-size: 2vw;
+	}
+	.user-info-body {
+		font-size: 1.8vw;
+	}
+}
+/* md */
+@media only screen and (min-width: 768px) {
+	#user-bar {
+		width: 25vw;
+	}
+	#user-pokemon-list {
+		width: 75%;
+	}
+	#user-username {
+		font-size: 1.2vw;
+	}
+	.user-info-head {
+		font-size: 1.5vw;
+	}
+	.user-info-body {
+		font-size: 0.7vw;
+	}
+	#pokemon-1-container {
+		height: 70%;
+	}
+	#pokemon-2-container {
+		height: 70%;
+	}
+	#sort-controller {
+		height: 25%;
+	}
+	#sort-controller-inner {
+		height: 100%;
+	}
+}
+@media only screen and (min-width: 992px) {
+	#user-edit-spacer {
+		height: 50%;
+	}
+}
+@media only screen and (min-width: 1200px) {
+	#pokemon-1-container {
+		height: 100%;
+	}
+	#pokemon-2-container {
+		height: 100%;
+	}
+	#sort-controller {
+		height: 100%;
+	}
+	#sort-controller-inner {
+		height: 50%;
+	}
+}
+@media only screen and (min-width: 1400px) {
+}
 
 html body div #content {
 	padding: 0;

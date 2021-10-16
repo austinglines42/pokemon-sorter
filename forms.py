@@ -27,19 +27,12 @@ class LoginForm(FlaskForm):
     username = StringField('Username',  validators=[DataRequired()])
     password = PasswordField("Password", validators=[Length(min=6)])
 
-# class SelectGenerationForm(FlaskForm):
-#     """Let's the user select the generation(s) they will be sorting"""
-
-#     Gen1 = BooleanField('Kanto (Gen 1)')
-#     Gen2 = BooleanField('Johto (Gen 2)')
-#     Gen3 = BooleanField('Hoenn (Gen 3)')
-#     Gen4 = BooleanField('Sinnoh (Gen 4)')
-#     Gen5 = BooleanField('Unova (Gen 5)')
-#     Gen6 = BooleanField('Kalos (Gen 6)')
-#     Gen7 = BooleanField('Alola (Gen 7)')
-#     Gen8 = BooleanField('Galar (Gen 8)')
-
 class EditUserPokemon(FlaskForm):
     """Edits a pokemon on a user's pokemon list."""
 
     note = TextAreaField('Note')
+
+class ConfirmPassword(FlaskForm):
+    """Form for verifying user's password"""
+
+    password = PasswordField("Password", validators=[Length(min=6)])

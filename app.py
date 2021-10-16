@@ -4,15 +4,14 @@ from types import MethodDescriptorType
 from flask import Flask, render_template, request, flash, redirect, session, g
 # from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-from forms import SignupForm, LoginForm, EditUserPokemon, EditUserForm
+from forms import SignupForm, LoginForm, EditUserPokemon, EditUserForm, ConfirmPassword
 from models import db, connect_db, User, Pokemon, PokemonMove, Move, Generation, UserPokemon, PokemonType, Type
 
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 if __name__ == "__main__":
-    
-    app.run(host='10.0.0.30')
+    app.run(host='0.0.0.0', debug=True)
     app.run(ssl_context='adhoc')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///pokemon_sorter'
@@ -43,6 +42,7 @@ def do_login(user):
 
 def do_logout():
     """Logs a user out of the site"""
+    
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
 
@@ -57,7 +57,8 @@ def require_login():
 def home_page():
     """Routes the user to the homepage."""
     if not g.user:
-        return render_template('home.html')
+        flash("You must login to use this site!", "info")
+        return redirect("/login")
     p_list = UserPokemon.query.filter(UserPokemon.user_id==g.user.id).order_by(UserPokemon.rank)
     pokemon_list = [pokemon for pokemon in p_list]
 
@@ -79,6 +80,7 @@ def user_login_page():
             do_login(user)
             flash(f'Sucessfully logged in!', 'success')
             return redirect('/')
+        flash("Incorrect username or password!", 'danger')
     return render_template("/users/login.html", form=form)
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -106,7 +108,7 @@ def logout_user():
     if g.user:
         flash('You have been logged out', 'success')
         do_logout()
-    return redirect('/')
+    return redirect('/login')
 
 @app.route('/users/<int:uid>')
 def user_page(uid):
@@ -167,6 +169,29 @@ def pokemon_sorter_page():
         saveData = json.loads(g.user.save_list)
         return render_template('sorter.html', saveData=saveData)
     return render_template('sorter.html')
+
+@app.route('/sorter/delete', methods=['GET', 'POST'])
+def delete_sorter_data():
+    """Delete's the user's sorter data"""
+
+    if not g.user:
+        flash("You must login to delete save data", 'danger')
+        return redirect('/login')
+
+    form = ConfirmPassword()
+
+    if form.validate_on_submit():
+        if User.authenticate(g.user.username, form.password.data):
+            user_id = g.user.id
+            user = User.query.get_or_404(user_id)
+            user.save_list = ''
+            for pokemon in user.pokemon:
+                db.session.delete(pokemon)
+            db.session.commit()
+            return redirect("/")
+        flash("Incorrect password!", "danger")
+    return render_template("delete_sort.html", form=form)
+
 
 @app.route('/api/sorter/generate', methods=['POST'])
 def generate_sort_list():

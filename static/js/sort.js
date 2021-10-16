@@ -121,17 +121,17 @@ for (let i = 1; i <= 8; i++) {
 async function deleteSaveData() {
 	if (deleteSaveConfirmation) {
 		sessionStorage.clear();
-		await axios.post('/api/sorter/delete', {
-			user: get_id()
-		});
-		window.location.replace('/sorter');
+		// await axios.post('/api/sorter/delete', {
+		// 	user: get_id()
+		// });
+		window.location.replace('/sorter/delete');
 	}
 	$('#delete-save-data h1').text('Are you sure?');
 	deleteSaveConfirmation = true;
 	setTimeout(() => {
 		$('#delete-save-data h1').text('Start over');
 		deleteSaveConfirmation = false;
-	}, 5000);
+	}, 2000);
 }
 
 // Saves the user's data into the session storage.
